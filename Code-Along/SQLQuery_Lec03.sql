@@ -20,3 +20,16 @@ SELECT ShipRegion, shipcountry, shipcity, COUNT(*) as 'Number of orders'
 FROM company.orders
 GROUP BY ShipRegion, shipcountry, shipcity;
 
+SELECT NEWID()
+
+SELECT CAST('45' as int)
+SELECT CONVERT(int, '45')
+
+declare @username as nvarchar(max) = 'sigpet';
+declare @email as nvarchar(max);
+
+set @email = (select top 1 firstname from users where UserName = @username);
+
+print concat('Email for user ', @username, ' is ', @email)
+
+
