@@ -4,13 +4,18 @@
         genomsnittligt antal isotoper visat med 2 decimaler, ”symbols” med en
         kommaseparerad lista av alla ämnen i perioden.  */
 
-SELECT DISTINCT [Period], MIN(Number) as 'from', MAX(Number) as 'to', ROUND(AVG(Stableisotopes), 2) as 'average isotopes', STRING_AGG(Symbol, ', ') as symbols FROM Elements GROUP BY [Period];
+SELECT DISTINCT [Period], MIN(Number) as 'from', MAX(Number) as 'to', CAST(ROUND(AVG(CAST(Stableisotopes as float)), 2) as decimal(5, 2)) as 'average isotopes', STRING_AGG(Symbol, ', ') as symbols
+FROM Elements
+GROUP BY [Period];
 
 /* b)   För varje stad som har 2 eller fler kunder i tabellen Customers, ta ut
         (select) följande kolumner: ”Region”, ”Country”, ”City”, samt
         ”Customers” som anger hur många kunder som finns i staden.  */
 
-SELECT Region, Country, City, COUNT(*) as 'Customers' FROM company.customers GROUP BY Region, Country, City HAVING COUNT(City) >= 2; 
+SELECT Region, Country, City, COUNT(*) as 'Customers'
+FROM company.customers
+GROUP BY Region, Country, City
+HAVING COUNT(City) >= 2;
 
 /* c)   Skapa en varchar-variabel och skriv en select-sats som sätter värdet:
         ”Säsong 1 sändes från april till juni 2011. Totalt
@@ -23,13 +28,15 @@ SELECT Region, Country, City, COUNT(*) as 'Customers' FROM company.customers GRO
         Tips: Ange ’sv’ som tredje parameter i format() för svenska månader. */
 
 
-SELECT * FROM GameOfThrones;
+SELECT *
+FROM GameOfThrones;
 
 SET LANGUAGE Swedish;
 
-DECLARE @air as VARCHAR;
+DECLARE @air as VARCHAR(MAX) = ('');
 
-set @air = (SELECT CONCAT('Säsong ', Season, ' sändes från ', DATENAME(month, MIN([Original air date])), 'till ', DATENAME(month, MAX([Original air date])), ' ', YEAR(MIN([Original air date])), '. Totalt
-    sändes ', SUM(EpisodeInSeason), ' avsnitt, som i genomsnitt sågs av ', AVG([U.S. viewers(millions)]), ' miljoner människor i USA.', CHAR(13)) FROM GameOfThrones GROUP BY Season);
+SELECT @air += CONCAT('Säsong ', Season, ' sändes från ', DATENAME(month, MIN([Original air date])), ' till ', DATENAME(month, MAX([Original air date])), ' ', YEAR(MIN([Original air date])), '. Totalt sändes ', SUM(EpisodeInSeason), ' avsnitt, som i genomsnitt sågs av ', AVG([U.S. viewers(millions)]), ' miljoner människor i USA.', CHAR(13))
+FROM GameOfThrones
+GROUP BY Season;
 
 PRINT(@air)
