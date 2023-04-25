@@ -12,16 +12,10 @@ SELECT o.ShipCity, COUNT(DISTINCT od.ProductId) as 'Unique products' FROM compan
 
 /* 3. Av de produkter som inte längre finns I vårat sortiment, hur mycket har vi sålt för totalt till Tyskland? */
 
-SELECT * FROM company.order_details;
-SELECT * FROM company.orders;
-SELECT * FROM company.suppliers;
-SELECT * FROM company.products;
+SELECT ROUND(SUM(od.UnitPrice * od.Quantity), 2) as 'Sold ($)' FROM company.orders o JOIN company.order_details od on o.Id = od.OrderId JOIN company.products p on od.ProductId = p.Id WHERE o.ShipCountry = 'Germany' AND p.Discontinued = 1;
 
 
 /* 4. För vilken produktkategori har vi högst lagervärde? */
-
-SELECT * FROM company.categories;
-SELECT * FROM company.products;
 
 SELECT p.CategoryId, ROUND(SUM(p.UnitPrice * p.UnitsInStock), 2) as 'Value' FROM company.categories c JOIN company.products p on c.Id = p.CategoryId GROUP BY p.CategoryId ORDER BY 'Value' DESC;
 
