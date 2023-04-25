@@ -24,3 +24,10 @@ SELECT * FROM company.categories;
 SELECT * FROM company.products;
 
 SELECT p.CategoryId, ROUND(SUM(p.UnitPrice * p.UnitsInStock), 2) as 'Value' FROM company.categories c JOIN company.products p on c.Id = p.CategoryId GROUP BY p.CategoryId ORDER BY 'Value' DESC;
+
+/* 5. Från vilken leverantör har vi sålt flest produkter totalt under sommaren 2013? */
+
+SELECT s.Id, s.CompanyName , SUM(od.Quantity) as 'Num Products' FROM company.orders o JOIN company.order_details od on o.Id = od.OrderId JOIN company.products p on od.ProductId = p.Id JOIN company.suppliers s on p.SupplierId = s.Id WHERE o.OrderDate BETWEEN '2013-06-21' AND '2013-09-23' GROUP BY s.Id, s.CompanyName ORDER BY 'Num Products' DESC;
+
+
+
