@@ -18,7 +18,7 @@ SELECT ROUND(SUM(od.UnitPrice * od.Quantity), 2) as 'Sold ($)' FROM company.orde
 
 /* 4. För vilken produktkategori har vi högst lagervärde? */
 
-SELECT p.CategoryId, ROUND(SUM(p.UnitPrice * p.UnitsInStock), 2) as 'Value' FROM company.categories c JOIN company.products p on c.Id = p.CategoryId GROUP BY p.CategoryId ORDER BY 'Value' DESC;
+SELECT p.CategoryId, c.CategoryName ,ROUND(SUM(p.UnitPrice * p.UnitsInStock), 2) as 'Value' FROM company.categories c JOIN company.products p on c.Id = p.CategoryId GROUP BY p.CategoryId, c.CategoryName ORDER BY 'Value' DESC;
 
 
 /* 5. Från vilken leverantör har vi sålt flest produkter totalt under sommaren 2013? */
