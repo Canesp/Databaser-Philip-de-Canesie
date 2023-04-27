@@ -41,5 +41,75 @@ WHERE o.OrderDate BETWEEN '2013-06-21' AND '2013-09-23'
 GROUP BY s.Id, s.CompanyName
 ORDER BY 'Num Products' DESC;
 
+/* Mellan uppgift */
 
+SELECT *
+FROM music.albums;
+SELECT *
+FROM music.artists;
+SELECT *
+FROM music.genres;
+SELECT *
+FROM music.media_types;
+SELECT *
+FROM music.playlist_track;
+SELECT *
+FROM music.playlists;
+SELECT *
+FROM music.tracks;
+
+declare @playlist varchar(max) = 'Heavy Metal Classic';
+
+SELECT 
+    g.Name as 'Genre', 
+    ar.Name as 'Artist', 
+    a.Title as 'Album',
+    t.Name as 'Track',
+    RIGHT(CONVERT(varchar, DATEADD(MILLISECOND, t.Milliseconds, 0), 108), 5) as 'Length', 
+    CONCAT(CAST(ROUND(t.Bytes / 1048576.0, 1) as numeric(36,1)), ' MiB') as 'Size',
+    CASE WHEN t.Composer IS NULL THEN '-' ELSE t.Composer END as 'Composer'
+FROM 
+    music.playlists p 
+    JOIN music.playlist_track pt on p.PlaylistId = pt.PlaylistId 
+    JOIN music.tracks t on pt.TrackId = t.TrackId 
+    JOIN music.genres g on t.GenreId = g.GenreId 
+    JOIN music.albums a on t.AlbumId = a.AlbumId 
+    JOIN music.artists ar on a.ArtistId = ar.ArtistId
+WHERE p.Name = @playlist;
+
+/* 1. Av alla audiospår, vilken artist har längst total speltid? */
+/* 2. Vad är den genomsnittliga speltiden på den artistens låtar? */
+
+SELECT 
+    ar.ArtistId, 
+    ar.Name, 
+    SUM(t.Milliseconds) as 'total time', 
+    AVG(t.Milliseconds) as 'AVG time'
+FROM 
+    music.tracks t 
+    JOIN music.albums a on t.AlbumId = a.AlbumId 
+    JOIN music.artists ar on a.ArtistId = ar.ArtistId 
+GROUP BY 
+    ar.ArtistId, ar.Name 
+ORDER BY 'total time' DESC;
+
+/* 3. Vad är den sammanlagda filstorleken för all video? */
+
+SELECT SUM(CONVERT(bigint, t.Bytes)) as 'total video size' FROM music.tracks t WHERE MediaTypeId = 3;
+
+/* 4. Vilket är det högsta antal artister som finns på en enskild spellista? */
+
+SELECT 
+    p.PlaylistId, 
+    COUNT(DISTINCT a.ArtistId) as 'Number of artists'
+FROM 
+    music.playlists p 
+    JOIN music.playlist_track pt on p.PlaylistId = pt.PlaylistId 
+    JOIN music.tracks t on pt.TrackId = t.TrackId 
+    JOIN music.albums a on t.AlbumId = a.AlbumId 
+GROUP BY 
+    p.PlaylistId
+ORDER BY 'Number of artists' DESC;
+
+/* 5. Vilket är det genomsnittliga antalet artister per spellista? */
 
