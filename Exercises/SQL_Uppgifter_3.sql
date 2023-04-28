@@ -43,21 +43,6 @@ ORDER BY 'Num Products' DESC;
 
 /* Mellan uppgift */
 
-SELECT *
-FROM music.albums;
-SELECT *
-FROM music.artists;
-SELECT *
-FROM music.genres;
-SELECT *
-FROM music.media_types;
-SELECT *
-FROM music.playlist_track;
-SELECT *
-FROM music.playlists;
-SELECT *
-FROM music.tracks;
-
 declare @playlist varchar(max) = 'Heavy Metal Classic';
 
 SELECT 
@@ -89,6 +74,8 @@ FROM
     music.tracks t 
     JOIN music.albums a on t.AlbumId = a.AlbumId 
     JOIN music.artists ar on a.ArtistId = ar.ArtistId 
+WHERE 
+    t.MediaTypeId != 3
 GROUP BY 
     ar.ArtistId, ar.Name 
 ORDER BY 'total time' DESC;
@@ -98,18 +85,23 @@ ORDER BY 'total time' DESC;
 SELECT SUM(CONVERT(bigint, t.Bytes)) as 'total video size' FROM music.tracks t WHERE MediaTypeId = 3;
 
 /* 4. Vilket är det högsta antal artister som finns på en enskild spellista? */
-
-SELECT 
-    p.PlaylistId, 
-    COUNT(DISTINCT a.ArtistId) as 'Number of artists'
-FROM 
-    music.playlists p 
-    JOIN music.playlist_track pt on p.PlaylistId = pt.PlaylistId 
-    JOIN music.tracks t on pt.TrackId = t.TrackId 
-    JOIN music.albums a on t.AlbumId = a.AlbumId 
-GROUP BY 
-    p.PlaylistId
-ORDER BY 'Number of artists' DESC;
-
 /* 5. Vilket är det genomsnittliga antalet artister per spellista? */
+
+SELECT AVG(subquery.[Number of artists]) FROM 
+(
+    SELECT 
+        p.PlaylistId, 
+        COUNT(DISTINCT a.ArtistId) as 'Number of artists'
+    FROM 
+        music.playlists p 
+        JOIN music.playlist_track pt on p.PlaylistId = pt.PlaylistId 
+        JOIN music.tracks t on pt.TrackId = t.TrackId 
+        JOIN music.albums a on t.AlbumId = a.AlbumId 
+    GROUP BY 
+        p.PlaylistId
+    
+) subquery
+
+
+
 
