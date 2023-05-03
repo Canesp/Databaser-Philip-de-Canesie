@@ -89,13 +89,10 @@ HAVING
 GO
 
 
-UPDATE 
+UPDATE
     NewUsers
 SET 
-    UserName = CONCAT(UserName, CAST(subquery.[row] as int))
-FROM 
-    (SELECT row = ROW_NUMBER() OVER (ORDER BY UserName) FROM NewUsers) as subquery 
-    
+    UserName = CONCAT(SUBSTRING(UserName, 1, 4), LEFT(ID, 1), RIGHT(ID, 1))
 WHERE
     UserName IN (SELECT UserName as u FROM NewUsers GROUP BY UserName HAVING COUNT(UserName) > 1);
 
@@ -109,7 +106,7 @@ GO
 
 
 INSERT INTO NewUsers (ID, UserName, [Password], Name, Gender, Email, Phone) 
-VALUES (96, 'petnor', '05443ad5f94kf0193k', 'peter north', 'Male', 'peter.north@gmail.com', '0702-2346434')
+VALUES ('960430-4532', 'petnor', '05443ad5f94kf0193k', 'peter north', 'Male', 'peter.north@gmail.com', '0702-2346434')
 
 GO
 
@@ -126,3 +123,51 @@ GO
 
 
 -- Company (Joins) 
+
+SELECT 
+    p.Id, 
+    p.ProductName as Product, 
+    s.CompanyName as Supplier, 
+    c.CategoryName as Category 
+FROM 
+    company.products p 
+JOIN 
+    company.suppliers s on p.SupplierId = s.Id 
+JOIN 
+    company.categories c on p.CategoryId = c.Id;
+
+GO
+
+
+SELECT 
+    RegionDescription as Regions,
+    COUNT(DISTINCT et.EmployeeId) as 'Employee Count'
+FROM 
+    company.regions r 
+JOIN 
+    company.territories t on r.Id = t.RegionId 
+JOIN 
+    company.employee_territory et on t.Id = et.TerritoryId 
+GROUP BY 
+    RegionId,
+    RegionDescription;
+
+GO
+
+SELECT 
+    DISTINCT E1.Id,
+    CONCAT(E1.TitleOfCourtesy, E1.FirstName,' ', E1.LastName) as 'Name',
+    CASE 
+        WHEN 
+            E1.ReportsTo 
+        IS NULL THEN 
+            'Nobody!' 
+        ELSE 
+            CONCAT(E2.TitleOfCourtesy, E2.FirstName,' ', E2.LastName) 
+    END as 'Reports to' 
+FROM 
+    company.employees E1 
+LEFT JOIN 
+    company.employees E2 on E1.ReportsTo = E2.Id;
+
+
