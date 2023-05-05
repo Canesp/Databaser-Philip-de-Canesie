@@ -33,6 +33,21 @@ ADD CONSTRAINT FK_Ordrar_ButikId
 FOREIGN KEY (ButikId)
 REFERENCES Butiker (Id)
 
+ALTER TABLE Böcker
+ADD CONSTRAINT FK_Böcker_FörlagId
+FOREIGN KEY (FörlagId)
+REFERENCES Förlag (Id)
+
+ALTER TABLE BöckerFörfattre
+ADD CONSTRAINT FK_BöckerFörfattare_ISBN
+FOREIGN KEY (ISBN)
+REFERENCES Böcker (ISBN13)
+
+ALTER TABLE BöckerFörfattre
+ADD CONSTRAINT FK_BöckerFörfattare_FörfattareId
+FOREIGN KEY (FörfattareId)
+REFERENCES Författare (Id)
+
 -- lägger till som demo data.
 SET IDENTITY_INSERT Böcker ON
 
@@ -50,6 +65,18 @@ VALUES(9780261102361, 'The Two Towers', 'Engelska', 133, '2007-04-01', 0)
 INSERT INTO Böcker (ISBN13, Titel, Språk, Pris, Utgivningsdatum, FörfattareID) 
 VALUES(9780261102378, 'The Return of the King', 'Engelska', 121, '2007-04-01', 0)
 
+INSERT INTO Förlag (Namn, kontaktperson, Email)
+VALUES('harperCollins UK', 'Maria Bengtsson', 'harperCollinsUK@gmail.com')
+
+INSERT INTO BöckerFörfattre (ISBN, FörfattareId)
+VALUES(9780261102354, 0)
+
+INSERT INTO BöckerFörfattre (ISBN, FörfattareId)
+VALUES(9780261102361, 0)
+
+INSERT INTO BöckerFörfattre (ISBN, FörfattareId)
+VALUES(9780261102378, 0)
+
 -- Stormlight Archive
 
 INSERT INTO Författare (Förnamn, Efternamn, Födelsedatum) 
@@ -61,6 +88,15 @@ VALUES(9780765365279, 'The Way of Kings', 'Engelska', 146, '2011-05-01', 1)
 INSERT INTO Böcker (ISBN13, Titel, Språk, Pris, Utgivningsdatum, FörfattareID) 
 VALUES(9780765326362, 'Words of Radiance', 'Engelska', 264, '2014-03-01', 1)
 
+INSERT INTO Förlag (Namn, kontaktperson, Email)
+VALUES('Tor Books', 'Stefan skog', 'TorBooks@gmail.com')
+
+INSERT INTO BöckerFörfattre (ISBN, FörfattareId)
+VALUES(9780765365279, 1)
+
+INSERT INTO BöckerFörfattre (ISBN, FörfattareId)
+VALUES(9780765326362, 1)
+
 -- The Hitchhikers Guide to the Galaxy
 
 INSERT INTO Författare (Förnamn, Efternamn, Födelsedatum) 
@@ -68,6 +104,12 @@ VALUES('Douglas', 'Adams', '1952-3-11')
 
 INSERT INTO Böcker (ISBN13, Titel, Språk, Pris, Utgivningsdatum, FörfattareID) 
 VALUES(9780345391803, 'The Hitchhikers Guide to the Galaxy', 'Engelska', 113, '1995-09-01', 2)
+
+INSERT INTO Förlag (Namn, kontaktperson, Email)
+VALUES('Del Rey Books', 'Joel Andersson', 'DelReyBooks@gmail.com')
+
+INSERT INTO BöckerFörfattre (ISBN, FörfattareId)
+VALUES(9780345391803, 2)
 
 -- Sun Eater
 
@@ -80,16 +122,34 @@ VALUES(9781473218277, 'Empire of Silence', 'Engelska', 168, '2019-03-21', 3)
 INSERT INTO Böcker (ISBN13, Titel, Språk, Pris, Utgivningsdatum, FörfattareID) 
 VALUES(9781473218307, 'Howling Dark', 'Engelska', 170, '2020-01-09', 3)
 
+INSERT INTO Förlag (Namn, kontaktperson, Email)
+VALUES('Gollancz', 'Karl Andersson', 'Gollancz@gmail.com')
+
+INSERT INTO BöckerFörfattre (ISBN, FörfattareId)
+VALUES(9781473218277, 3)
+
+INSERT INTO BöckerFörfattre (ISBN, FörfattareId)
+VALUES(9781473218307, 3)
+
 -- the expanse
 
 INSERT INTO Författare (Förnamn, Efternamn) 
-VALUES('James S. A.', 'Corey')
+VALUES('James C. A.', 'Corey')
 
 INSERT INTO Böcker (ISBN13, Titel, Språk, Pris, Utgivningsdatum, FörfattareID) 
-VALUES(9781841499895, 'Leviathan Wakes', 'Engelska', 132, '2012-05-03', 4)
+VALUES(9781841499895, 'Leviathan Wakes', 'Engelska', 132, '2012-05-03', 5)
 
 INSERT INTO Böcker (ISBN13, Titel, Språk, Pris, Utgivningsdatum, FörfattareID) 
 VALUES(9781841499918, 'Calibans War', 'Engelska', 143, '2013-05-02', 4)
+
+INSERT INTO Förlag (Namn, kontaktperson, Email)
+VALUES('Little Brown', 'Adam tor', 'LittleBrown@gmail.com')
+
+INSERT INTO BöckerFörfattre (ISBN, FörfattareId)
+VALUES(9781841499895, 4)
+
+INSERT INTO BöckerFörfattre (ISBN, FörfattareId)
+VALUES(9781841499918, 4)
 
 
 -- Butiker 
@@ -150,9 +210,11 @@ SELECT
     CONCAT(COUNT(DISTINCT b.ISBN13), ' st') as Titlar,
     CONCAT(SUM(b.Pris * l.Antal), ' kr') as Lagervärde
 FROM 
-    Författare f 
+    Författare f
+JOIN
+    BöckerFörfattre bf on bf.FörfattareId = f.Id
 JOIN 
-    Böcker b on b.FörfattareID = f.Id 
+    Böcker b on b.ISBN13 = bf.ISBN
 JOIN 
     LagerSaldo l on l.ISBN = b.ISBN13 
 GROUP BY 
@@ -161,5 +223,5 @@ GROUP BY
     f.Efternamn, 
     f.Födelsedatum; */
 
-SELECT TOP 1 * FROM TitlarPerFörfattare;
+SELECT * FROM TitlarPerFörfattare;
  
