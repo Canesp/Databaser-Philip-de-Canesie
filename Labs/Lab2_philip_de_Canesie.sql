@@ -141,3 +141,25 @@ VALUES (2, 2, '2023-04-20')
 INSERT INTO Ordrar_detaljer (OrderId, BokId, Mängd)
 VALUES (8, 9780345391803, 1)
 
+-- Vy
+
+/* CREATE VIEW TitlarPerFörfattare AS
+SELECT 
+    CONCAT(Förnamn, ' ', Efternamn) as Name,
+    CONCAT(ISNULL(CAST(DATEDIFF(YEAR, Födelsedatum, GETDATE()) as nvarchar), '-'), ' år') as Ålder,
+    CONCAT(COUNT(DISTINCT b.ISBN13), ' st') as Titlar,
+    CONCAT(SUM(b.Pris * l.Antal), ' kr') as Lagervärde
+FROM 
+    Författare f 
+JOIN 
+    Böcker b on b.FörfattareID = f.Id 
+JOIN 
+    LagerSaldo l on l.ISBN = b.ISBN13 
+GROUP BY 
+    f.id, 
+    f.Förnamn, 
+    f.Efternamn, 
+    f.Födelsedatum; */
+
+SELECT TOP 1 * FROM TitlarPerFörfattare;
+ 
