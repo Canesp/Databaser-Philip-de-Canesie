@@ -224,4 +224,291 @@ GROUP BY
     f.Födelsedatum; */
 
 SELECT * FROM TitlarPerFörfattare;
+
+-- PROCEDURE
+
+ALTER PROCEDURE FlyttaBok @från INT, @till INT, @ISBN BIGINT, @Antal INT = 1 AS
+BEGIN
+    DECLARE @valuescorrect as BIT = (0);
+
+    IF @från IN (SELECT Id FROM Butiker)
+    BEGIN
+        SET @valuescorrect = 1;
+    END;
+    ELSE
+    BEGIN;
+        PRINT('ButikId (från) finns inte!');
+        SET @valuescorrect = 0;
+    END;
+
+    IF @till IN (SELECT Id FROM Butiker)
+    BEGIN
+        SET @valuescorrect = 1;
+    END;
+    ELSE
+    BEGIN
+        PRINT('ButikId (till) finns inte!');
+        SET @valuescorrect = 0;
+    END;
+
+    IF @ISBN IN (SELECT ISBN FROM LagerSaldo WHERE ButikID = @från)
+    BEGIN
+
+        IF (SELECT Antal FROM LagerSaldo WHERE ISBN = @ISBN AND ButikID = @från) >= @antal
+        BEGIN
+            SET @valuescorrect = 1;
+        END;
+        ELSE
+        BEGIN
+            PRINT('Det finns inte tillräckligt många böcker!');
+            SET @valuescorrect = 0;
+        END;
+
+    END;
+    ELSE
+    BEGIN
+        PRINT('ISBN finns inte!');
+        SET @valuescorrect = 0;
+    END; 
+
+    IF @valuescorrect = 1 AND @antal > 0
+    BEGIN
+
+        IF @ISBN IN (SELECT ISBN FROM LagerSaldo WHERE ButikID = @till)
+        BEGIN
+            UPDATE 
+                LagerSaldo
+            SET 
+                Antal += @Antal
+            WHERE
+                ButikID = @till;
+
+            UPDATE 
+                LagerSaldo
+            SET 
+                Antal -= @Antal
+            WHERE
+                ButikID = @från;
+        END;
+        ELSE
+        BEGIN
+            INSERT INTO LagerSaldo (ISBN, Antal, ButikID)
+            VALUES(@ISBN, @Antal, @till);
+
+             UPDATE 
+                LagerSaldo
+            SET 
+                Antal -= @Antal
+            WHERE
+                ButikID = @från;
+        END;
+    END;
+    
+    ELSE
+    BEGIN
+        PRINT('ERROR KAN INTE UTFÖRA FÖRFLYTTNING DÅ ALLA KRAV INTE VAR UPPFYLLDA.');
+    END
+
+END;
+
+
+
+
+
+
+
+SELECT * FROM LagerSaldo
+
+EXECUTE FlyttaBok 2, 0, 9780261102361, 1
+
+
+
+
+ALTER PROCEDURE FlyttaBok @från INT, @till INT, @ISBN BIGINT, @Antal INT = 1 AS
+BEGIN
+    DECLARE @valuescorrect as BIT = (0);
+
+    IF @från IN (SELECT Id FROM Butiker)
+        SET @valuescorrect = 1;
+    ELSE
+        PRINT('ButikId (från) finns inte!');
+        SET @valuescorrect = 0;
+
+    IF @till IN (SELECT Id FROM Butiker)
+        SET @valuescorrect = 1;
+    ELSE
+        PRINT('ButikId (till) finns inte!');
+        SET @valuescorrect = 0;
+
+    IF @ISBN IN (SELECT ISBN FROM LagerSaldo WHERE ButikID = @från)
+
+        IF (SELECT Antal FROM LagerSaldo WHERE ISBN = @ISBN AND ButikID = @från) >= @antal
+            SET @valuescorrect = 1;
+        ELSE
+            PRINT('Det finns inte tillräckligt många böcker!');
+            SET @valuescorrect = 0;
+    ELSE
+        PRINT('ISBN finns inte!');
+        SET @valuescorrect = 0;
+
+    IF @valuescorrect = 1 AND @antal > 0
+
+        IF @ISBN IN (SELECT ISBN FROM LagerSaldo WHERE ButikID = @till)
+
+            UPDATE 
+                LagerSaldo
+            SET 
+                Antal += @Antal
+            WHERE
+                ButikID = @till;
+
+            UPDATE 
+                LagerSaldo
+            SET 
+                Antal -= @Antal
+            WHERE
+                ButikID = @från;
+        
+        ELSE
+
+            INSERT INTO LagerSaldo (ISBN, Antal, ButikID)
+            VALUES(@ISBN, @Antal, @till);
+
+             UPDATE 
+                LagerSaldo
+            SET 
+                Antal -= @Antal
+            WHERE
+                ButikID = @från;
+
+END;
  
+SELECT * FROM LagerSaldo
+
+EXECUTE FlyttaBok 4, 1, 98989, 1
+ALTER PROCEDURE FlyttaBok @från INT, @till INT, @ISBN BIGINT, @Antal INT = 1 AS
+BEGIN
+    DECLARE @valuescorrect as BIT = (0);
+
+    IF @från IN (SELECT Id FROM Butiker)
+        SET @valuescorrect = 1;
+    ELSE
+        PRINT('ButikId (från) finns inte!');
+        SET @valuescorrect = 0;
+
+    IF @till IN (SELECT Id FROM Butiker)
+        SET @valuescorrect = 1;
+    ELSE
+        PRINT('ButikId (till) finns inte!');
+        SET @valuescorrect = 0;
+
+    IF @ISBN IN (SELECT ISBN FROM LagerSaldo WHERE ButikID = @från)
+
+        IF (SELECT Antal FROM LagerSaldo WHERE ISBN = @ISBN AND ButikID = @från) >= @antal
+            SET @valuescorrect = 1;
+        ELSE
+            PRINT('Det finns inte tillräckligt många böcker!');
+            SET @valuescorrect = 0;
+    ELSE
+        PRINT('ISBN finns inte!');
+        SET @valuescorrect = 0;
+
+    IF @valuescorrect = 1 AND @antal > 0
+
+        IF @ISBN IN (SELECT ISBN FROM LagerSaldo WHERE ButikID = @till)
+
+            UPDATE 
+                LagerSaldo
+            SET 
+                Antal += @Antal
+            WHERE
+                ButikID = @till;
+
+            UPDATE 
+                LagerSaldo
+            SET 
+                Antal -= @Antal
+            WHERE
+                ButikID = @från;
+        
+        ELSE
+
+            INSERT INTO LagerSaldo (ISBN, Antal, ButikID)
+            VALUES(@ISBN, @Antal, @till);
+
+             UPDATE 
+                LagerSaldo
+            SET 
+                Antal -= @Antal
+            WHERE
+                ButikID = @från;
+
+
+END;
+ 
+SELECT * FROM LagerSaldo
+
+EXECUTE FlyttaBok 4, 1, 98989, 1
+ALTER PROCEDURE FlyttaBok @från INT, @till INT, @ISBN BIGINT, @Antal INT = 1 AS
+BEGIN
+    DECLARE @valuescorrect as BIT = (0);
+
+    IF @från IN (SELECT Id FROM Butiker)
+        SET @valuescorrect = 1;
+    ELSE
+        PRINT('ButikId (från) finns inte!');
+        SET @valuescorrect = 0;
+
+    IF @till IN (SELECT Id FROM Butiker)
+        SET @valuescorrect = 1;
+    ELSE
+        PRINT('ButikId (till) finns inte!');
+        SET @valuescorrect = 0;
+
+    IF @ISBN IN (SELECT ISBN FROM LagerSaldo WHERE ButikID = @från)
+
+        IF (SELECT Antal FROM LagerSaldo WHERE ISBN = @ISBN AND ButikID = @från) >= @antal
+            SET @valuescorrect = 1;
+        ELSE
+            PRINT('Det finns inte tillräckligt många böcker!');
+            SET @valuescorrect = 0;
+    ELSE
+        PRINT('ISBN finns inte!');
+        SET @valuescorrect = 0;
+
+    IF @valuescorrect = 1 AND @antal > 0
+
+        IF @ISBN IN (SELECT ISBN FROM LagerSaldo WHERE ButikID = @till)
+
+            UPDATE 
+                LagerSaldo
+            SET 
+                Antal += @Antal
+            WHERE
+                ButikID = @till;
+
+            UPDATE 
+                LagerSaldo
+            SET 
+                Antal -= @Antal
+            WHERE
+                ButikID = @från;
+        
+        ELSE
+
+            INSERT INTO LagerSaldo (ISBN, Antal, ButikID)
+            VALUES(@ISBN, @Antal, @till);
+
+             UPDATE 
+                LagerSaldo
+            SET 
+                Antal -= @Antal
+            WHERE
+                ButikID = @från;
+
+
+END;
+ 
+SELECT * FROM LagerSaldo
+
+EXECUTE FlyttaBok 4, 1, 98989, 1
