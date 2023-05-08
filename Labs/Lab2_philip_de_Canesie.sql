@@ -273,6 +273,7 @@ BEGIN
 
     IF @valuescorrect = 1 AND @antal > 0
     BEGIN
+        BEGIN TRANSACTION;
 
         IF @ISBN IN (SELECT ISBN FROM LagerSaldo WHERE ButikID = @till)
         BEGIN
@@ -302,6 +303,8 @@ BEGIN
             WHERE
                 ButikID = @från;
         END;
+
+        COMMIT TRANSACTION;
     END;
     
     ELSE
@@ -311,8 +314,5 @@ BEGIN
 
 END;
 
-EXECUTE FlyttaBok 2, 0, 9780261102361, 1;
-
-
-
+EXECUTE FlyttaBok 0, 2, 9780261102361, 1;
 
