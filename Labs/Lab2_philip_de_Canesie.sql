@@ -226,7 +226,7 @@ GROUP BY
 SELECT * FROM TitlarPerFörfattare;
 
 -- PROCEDURE
-
+/* 
 ALTER PROCEDURE FlyttaBok @från INT, @till INT, @ISBN BIGINT, @Antal INT = 1 AS
 BEGIN
     DECLARE @valuescorrect as BIT = (0);
@@ -312,7 +312,29 @@ BEGIN
         PRINT('ERROR KAN INTE UTFÖRA FÖRFLYTTNING DÅ ALLA KRAV INTE VAR UPPFYLLDA.');
     END
 
-END;
+END; */
 
 EXECUTE FlyttaBok 0, 2, 9780261102361, 1;
 
+-- new view 
+
+/* CREATE VIEW Inkomstöverblick AS
+-- Denna vy ger användaren en överblick över hur bra eller dåligt det har gått för företaget varje månad.
+-- Igenom att sammanställa mängden ordrar per månad och kalkylera den totala mängden inkomst för den månaden. 
+SELECT 
+    CONCAT(YEAR(o.OrderDate), ' ', DATENAME(MONTH, o.OrderDate)) as 'Date',
+    COUNT(DISTINCT o.Id) as 'Antal ordrar', 
+    CONCAT(SUM(b.Pris * od.Mängd), ' kr') as 'Total inkomst',
+    SUM(od.Mängd) as 'Antal böcker'
+FROM 
+    Ordrar o 
+JOIN 
+    Ordrar_detaljer od on o.Id = od.OrderId 
+JOIN 
+    Böcker b on od.BokId = b.ISBN13 
+GROUP BY 
+    DATENAME(MONTH, o.OrderDate), 
+    YEAR(o.OrderDate), 
+    MONTH(o.OrderDate); */
+
+SELECT * FROM Inkomstöverblick
