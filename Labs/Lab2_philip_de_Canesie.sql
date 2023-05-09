@@ -338,3 +338,7 @@ GROUP BY
     MONTH(o.OrderDate); */
 
 SELECT * FROM Inkomstöverblick
+
+SELECT ISBN13, Titel, bu.butiksnamn, l.Antal FROM Böcker b JOIN LagerSaldo l on b.ISBN13 = l.ISBN JOIN Butiker bu on bu.Id = l.ButikID Where Titel LIKE '%e%';
+
+SELECT butiksnamn, SUM(Antal) FROM LagerSaldo l JOIN Butiker b on b.Id = l.ButikID WHERE ISBN IN (SELECT ISBN13 FROM Böcker Where Titel LIKE '%e%') GROUP BY l.ButikID, l.ISBN, b.butiksnamn;
