@@ -301,7 +301,7 @@ BEGIN
             SET 
                 Antal -= @Antal
             WHERE
-                ButikID = @från;
+                ButikID = @från AND ISBN = @ISBN;
         END;
 
         COMMIT TRANSACTION;
@@ -345,6 +345,7 @@ SELECT l.ISBN, l.ButikID, SUM(Antal) FROM LagerSaldo l JOIN Butiker b on b.Id = 
 
 
 
+EXECUTE FlyttaBok 1, 0, 9781841499918, 1;
 
+SELECT * FROM LagerSaldo
 
-SELECT butiksnamn, Id FROM Butiker;
